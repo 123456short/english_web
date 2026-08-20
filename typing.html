@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打字练习 - 铁柱英语</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body data-page="typing">
+  <main class="main">
+    <div class="page-head">
+      <h1 class="page-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h2M10 8h2M14 8h2M6 12h2M10 12h2M14 12h2M18 12h2M6 16h2M10 16h2M14 16h2"></path></svg>
+        打字练习
+      </h1>
+      <p class="page-desc">照着句子输入，逐字校对正误；完成后自动统计速度（WPM）与正确率，并记入手速记录</p>
+    </div>
+
+    <div class="mode-switch">
+      <button class="mode-btn active" data-mode="practice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        练习模式
+      </button>
+      <button class="mode-btn" data-mode="game">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        射击游戏
+      </button>
+    </div>
+
+    <!-- 练习模式 -->
+    <div class="mode-panel" id="practicePanel">
+      <div class="typing-wrap">
+        <div class="typing-card">
+          <p class="typing-sentence" id="sentence"></p>
+          <input type="text" class="typing-input" id="typingInput" placeholder="点击这里开始输入…" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <div class="typing-meta">
+            <span class="typing-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+              <span id="hintText">本题释义：<span id="sentenceCn"></span></span>
+            </span>
+            <button class="btn btn-ghost" id="nextBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              换一句
+            </button>
+          </div>
+
+          <div class="typing-result" id="typingResult">
+            <div class="result-grid">
+              <div class="result-item"><div class="result-value" id="rWpm">0</div><div class="result-label">速度 WPM</div></div>
+              <div class="result-item"><div class="result-value" id="rAcc">0%</div><div class="result-label">正确率</div></div>
+              <div class="result-item"><div class="result-value" id="rTime">0s</div><div class="result-label">用时</div></div>
+              <div class="result-item"><div class="result-value" id="rErr">0</div><div class="result-label">错字数</div></div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" id="againBtn">再练一次</button>
+              <a class="btn btn-ghost" href="profile.html#speed">查看手速记录</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 射击游戏模式 -->
+    <div class="mode-panel" id="gamePanel" style="display:none">
+      <div class="game-container" id="gameContainer">
+        <!-- HUD -->
+        <div class="game-hud">
+          <div class="hud-stats">
+            <div class="hud-item">
+              <span class="hud-value" id="gameScore">0</span>
+              <span class="hud-label">得分</span>
+            </div>
+            <div class="hud-item">
+              <span class="hud-value" id="gameHits">0</span>
+              <span class="hud-label">命中</span>
+            </div>
+            <div class="hud-item">
+              <span class="hud-value" id="gameTime">5:00</span>
+              <span class="hud-label">剩余时间</span>
+            </div>
+          </div>
+          <div class="hud-actions">
+            <button class="btn btn-ghost" id="gamePauseBtn">暂停</button>
+            <button class="btn btn-ghost" id="gameEndBtn">结束</button>
+          </div>
+        </div>
+
+        <!-- 游戏设置 -->
+        <div class="game-settings">
+          <div class="setting-group">
+            <span class="setting-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+              下降速度
+            </span>
+            <div class="setting-chips" id="speedChips">
+              <button class="setting-chip" data-speed="0.6">慢速</button>
+              <button class="setting-chip active" data-speed="1">标准</button>
+              <button class="setting-chip" data-speed="1.6">快速</button>
+            </div>
+          </div>
+          <div class="setting-group">
+            <span class="setting-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              游戏时长
+            </span>
+            <div class="setting-chips" id="timeChips">
+              <button class="setting-chip" data-min="1">1分钟</button>
+              <button class="setting-chip" data-min="3">3分钟</button>
+              <button class="setting-chip active" data-min="5">5分钟</button>
+              <button class="setting-chip" data-min="10">10分钟</button>
+            </div>
+            <div class="custom-time">
+              <input type="number" id="customTimeInput" min="1" max="30" placeholder="自定义">
+              <span>分钟</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="game-area" id="gameArea">
+          <div class="stars-bg" id="starsBg"></div>
+
+          <!-- 开始界面 -->
+          <div class="game-overlay" id="gameStartOverlay">
+            <h2 class="game-title">英语单词射击游戏</h2>
+            <div class="game-rules">
+              <p>游戏规则：</p>
+              <ol>
+                <li>从屏幕上方会随机落下英语单词</li>
+                <li>在角色右侧输入单词，按回车键发射</li>
+                <li>如果发射的单词与屏幕中的单词匹配，即可击中得分</li>
+                <li>使用左右方向键移动角色</li>
+                <li>游戏时长默认5分钟（可自定义），下降速度可实时调节，尽可能获得高分！</li>
+              </ol>
+            </div>
+            <button class="btn btn-primary btn-game-start" id="gameStartBtn">开始游戏</button>
+          </div>
+
+          <!-- 暂停界面 -->
+          <div class="game-overlay" id="gamePauseOverlay" style="display:none">
+            <h2 class="game-title">游戏暂停</h2>
+            <button class="btn btn-primary btn-game-start" id="gameResumeBtn">继续游戏</button>
+          </div>
+
+          <!-- 结束界面 -->
+          <div class="game-overlay" id="gameOverOverlay" style="display:none">
+            <h2 class="game-title">游戏结束</h2>
+            <div class="game-final-stats">
+              <div class="final-stat">
+                <span class="final-value" id="finalScore">0</span>
+                <span class="final-label">最终得分</span>
+              </div>
+              <div class="final-stat">
+                <span class="final-value" id="finalHits">0</span>
+                <span class="final-label">命中数</span>
+              </div>
+              <div class="final-stat">
+                <span class="final-value" id="finalAcc">0%</span>
+                <span class="final-label">命中率</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-game-start" id="gameRestartBtn">再玩一局</button>
+          </div>
+
+          <!-- 玩家飞船 -->
+          <div class="player-ship" id="playerShip">
+            <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="shipBody" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ff6b9d"/>
+                  <stop offset="1" stop-color="#c44569"/>
+                </linearGradient>
+                <linearGradient id="shipWing" x1="16" y1="36" x2="16" y2="56" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ff8fab"/>
+                  <stop offset="1" stop-color="#ff6b9d"/>
+                </linearGradient>
+                <linearGradient id="flame" x1="32" y1="44" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#ffd93d"/>
+                  <stop offset="0.5" stop-color="#ff9500"/>
+                  <stop offset="1" stop-color="#ff3c3c" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <polygon points="32,4 44,28 44,48 32,42 20,48 20,28" fill="url(#shipBody)" stroke="#fff" stroke-width="1.5"/>
+              <polygon points="20,32 8,52 20,46" fill="url(#shipWing)" stroke="#fff" stroke-width="1"/>
+              <polygon points="44,32 56,52 44,46" fill="url(#shipWing)" stroke="#fff" stroke-width="1"/>
+              <circle cx="32" cy="22" r="6" fill="#e0f4ff" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="32" cy="22" r="3" fill="#6b5ce7"/>
+              <path d="M28,44 Q32,58 36,44" fill="url(#flame)">
+                <animate attributeName="d" dur="0.3s" repeatCount="indefinite" values="M28,44 Q32,58 36,44;M28,44 Q32,54 36,44;M28,44 Q32,58 36,44"/>
+              </path>
+            </svg>
+          </div>
+
+          <!-- 子弹容器 -->
+          <div class="bullets-layer" id="bulletsLayer"></div>
+          <!-- 单词容器 -->
+          <div class="words-layer" id="wordsLayer"></div>
+          <!-- 爆炸效果容器 -->
+          <div class="fx-layer" id="fxLayer"></div>
+        </div>
+
+        <!-- 输入栏 -->
+        <div class="game-input-bar">
+          <input type="text" class="game-input" id="gameInput" placeholder="输入单词..." autocomplete="off" autocapitalize="off" spellcheck="false" disabled>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/words.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/typing.js"></script>
+  <script src="js/typing-game.js"></script>
+</body>
+</html>
