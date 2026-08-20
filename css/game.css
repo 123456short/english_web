@@ -1,0 +1,531 @@
+/* ============================================
+   铁柱英语 · 打字射击游戏样式
+   ============================================ */
+
+/* ---------- 模式切换 ---------- */
+.mode-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--tz-card);
+  border: 1px solid var(--tz-border);
+  border-radius: var(--tz-radius-md);
+  padding: 4px;
+  margin-bottom: 20px;
+  width: fit-content;
+  box-shadow: var(--tz-shadow-card);
+}
+
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--tz-radius-sm);
+  background: transparent;
+  color: var(--tz-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover { color: var(--tz-foreground); }
+
+.mode-btn.active {
+  background: var(--tz-primary);
+  color: #fff;
+  box-shadow: 0 2px 6px var(--tz-primary-soft);
+}
+
+/* ---------- 游戏容器 ---------- */
+.game-container {
+  background: #0b0e1a;
+  border-radius: var(--tz-radius-lg);
+  box-shadow: var(--tz-shadow-lg);
+  overflow: hidden;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ---------- HUD ---------- */
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: linear-gradient(180deg, rgba(20, 24, 48, 0.95) 0%, rgba(20, 24, 48, 0.6) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-stats {
+  display: flex;
+  gap: 28px;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hud-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffd93d;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 1px;
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hud-actions .btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hud-actions .btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- 游戏区域 ---------- */
+.game-area {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0b0e1a 0%, #1a1040 40%, #3d1f5c 70%, #6b2d5c 100%);
+}
+
+.stars-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: starTwinkle 3s infinite ease-in-out;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+}
+
+/* ---------- 下落单词 ---------- */
+.falling-word {
+  position: absolute;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid #ffd93d;
+  border-radius: var(--tz-radius-sm);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(255, 217, 61, 0.4);
+  animation: wordGlow 2s infinite ease-in-out;
+}
+
+@keyframes wordGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(255, 217, 61, 0.3); }
+  50% { box-shadow: 0 0 14px rgba(255, 217, 61, 0.6); }
+}
+
+.falling-word.hit {
+  animation: wordHit 0.3s forwards;
+}
+
+@keyframes wordHit {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ---------- 玩家飞船 ---------- */
+.player-ship {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  transition: left 0.12s ease-out;
+  z-index: 10;
+  filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.5));
+}
+
+/* ---------- 子弹 ---------- */
+.bullets-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bullet {
+  position: absolute;
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(180deg, #ffd93d 0%, #ff9500 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px #ffd93d, 0 0 16px rgba(255, 150, 0, 0.5);
+}
+
+/* ---------- 爆炸效果 ---------- */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.explosion {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.explosion-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid #ffd93d;
+  animation: explodeRing 0.5s forwards;
+}
+
+@keyframes explodeRing {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.explosion-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffd93d;
+  animation: particleFly 0.5s forwards;
+}
+
+@keyframes particleFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+
+.score-popup {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: #ffd93d;
+  font-size: 18px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: scoreFloat 0.8s forwards;
+  text-shadow: 0 0 8px rgba(255, 217, 61, 0.6);
+}
+
+@keyframes scoreFloat {
+  0% { transform: translate(-50%, -50%); opacity: 1; }
+  100% { transform: translate(-50%, -120%); opacity: 0; }
+}
+
+/* ---------- 游戏输入栏 ---------- */
+.game-input-bar {
+  padding: 12px 20px 16px;
+  background: linear-gradient(0deg, rgba(20, 24, 48, 0.95) 0%, rgba(20, 24, 48, 0.7) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.game-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #ffd93d;
+  border-radius: var(--tz-radius-md);
+  color: #fff;
+  font-size: 18px;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.game-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-family: inherit;
+}
+
+.game-input:focus {
+  border-color: #fff;
+  box-shadow: 0 0 12px rgba(255, 217, 61, 0.4);
+}
+
+.game-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- 游戏遮罩（开始/暂停/结束） ---------- */
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 14, 26, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  padding: 20px;
+  text-align: center;
+}
+
+.game-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffd93d;
+  margin: 0 0 24px;
+  text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
+  letter-spacing: 2px;
+}
+
+.game-rules {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--tz-radius-lg);
+  padding: 20px 28px;
+  margin-bottom: 28px;
+  max-width: 420px;
+}
+
+.game-rules p {
+  color: #fff;
+  font-size: 15px;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.game-rules ol {
+  margin: 0;
+  padding-left: 20px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  line-height: 2;
+}
+
+.btn-game-start {
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 600;
+  background: #6b5ce7;
+  border: none;
+  color: #fff;
+  border-radius: var(--tz-radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(107, 92, 231, 0.5);
+}
+
+.btn-game-start:hover {
+  background: #5b4ed0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(107, 92, 231, 0.6);
+}
+
+.btn-game-start:active { transform: translateY(0); }
+
+/* ---------- 结束界面统计 ---------- */
+.game-final-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.final-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--tz-radius-md);
+  padding: 16px 20px;
+  min-width: 100px;
+}
+
+.final-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffd93d;
+  line-height: 1.1;
+}
+
+.final-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+}
+
+/* ---------- 暗色模式下的调整 ---------- */
+[data-theme="dark"] .mode-switch {
+  background: var(--tz-card);
+  border-color: var(--tz-border);
+}
+
+/* ---------- 多端适配 ---------- */
+@media (max-width: 768px) {
+  .game-area { height: 420px; }
+  .game-title { font-size: 26px; }
+  .game-rules { padding: 16px 20px; }
+  .game-rules ol { font-size: 12px; line-height: 1.8; }
+  .hud-stats { gap: 16px; }
+  .hud-value { font-size: 20px; }
+  .game-input { font-size: 16px; padding: 10px 14px; }
+  .player-ship { width: 40px; height: 40px; bottom: 56px; }
+  .final-stat { min-width: 80px; padding: 12px 14px; }
+  .final-value { font-size: 24px; }
+  .game-final-stats { gap: 12px; }
+  .mode-btn { padding: 6px 12px; font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  .game-area { height: 380px; }
+  .game-title { font-size: 22px; }
+  .hud-stats { gap: 12px; }
+  .hud-value { font-size: 18px; }
+  .hud-label { font-size: 10px; }
+  .game-rules ol { font-size: 11px; }
+  .btn-game-start { padding: 12px 30px; font-size: 14px; }
+}
+
+/* ---------- 游戏设置栏 ---------- */
+.game-settings {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background: rgba(20, 24, 48, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.setting-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.setting-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.setting-chips {
+  display: flex;
+  gap: 6px;
+}
+
+.setting-chip {
+  padding: 5px 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.setting-chip:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.setting-chip.active {
+  background: #6b5ce7;
+  border-color: #6b5ce7;
+  color: #fff;
+}
+
+.custom-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-time input {
+  width: 78px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-time input:focus { border-color: #ffd93d; }
+.custom-time input::placeholder { color: rgba(255, 255, 255, 0.35); }
+.custom-time span { font-size: 12px; color: rgba(255, 255, 255, 0.6); }
+
+.custom-time input::-webkit-outer-spin-button,
+.custom-time input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-time input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ---------- 输入脱靶抖动反馈 ---------- */
+.game-input.miss-shake {
+  animation: inputShake 0.35s ease;
+  border-color: #f87171;
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+/* ---------- 设置栏多端适配 ---------- */
+@media (max-width: 768px) {
+  .game-settings { padding: 8px 14px; gap: 10px; }
+  .setting-chip { padding: 4px 10px; font-size: 11px; }
+  .custom-time input { width: 62px; }
+}
+
+@media (max-width: 480px) {
+  .game-settings { gap: 6px; }
+  .setting-label { font-size: 11px; }
+  .setting-chips { gap: 4px; }
+}
