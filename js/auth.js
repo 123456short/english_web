@@ -53,14 +53,17 @@
   function goBack() {
     const params = new URLSearchParams(location.search);
     const redirect = params.get("redirect");
-    const safe = ["/", "/index.html", "/typing.html", "/reading.html", "/profile.html", "/login.html"];
-    const clean = redirect ? decodeURIComponent(redirect) : "/index.html";
-    let target = clean;
-    try {
-      const url = new URL(clean, location.origin);
-      if (url.origin !== location.origin) target = "/index.html";
-    } catch (e) { target = "/index.html"; }
-    if (!target.startsWith("/")) target = "/" + target;
+    /* 默认用相对路径，兼容 GitHub Pages 子路径部署（如 /english_web/） */
+    let target = "index.html";
+    if (redirect) {
+      try {
+        const url = new URL(decodeURIComponent(redirect), location.href);
+        /* 仅允许同源跳转，防外站重定向 */
+        if (url.origin === location.origin) {
+          target = url.pathname + url.search + url.hash;
+        }
+      } catch (e) {}
+    }
     location.href = target;
   }
 })();
