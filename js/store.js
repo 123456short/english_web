@@ -269,6 +269,9 @@ const Store = (() => {
   };
 })();
 
+/* const 声明不挂 window，显式挂载供 layout.js 等做 window.Store 检测（登录守卫依赖） */
+window.Store = Store;
+
 /* 通用工具 */
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
